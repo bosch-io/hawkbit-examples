@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 import org.eclipse.hawkbit.dmf.amqp.api.AmqpSettings;
@@ -323,7 +324,7 @@ public class DmfSenderService extends MessageService {
         headers.put(MessageHeaderKey.TOPIC, EventTopic.UPDATE_ACTION_STATUS.name());
         headers.put(MessageHeaderKey.CONTENT_TYPE, MessageProperties.CONTENT_TYPE_JSON);
         actionUpdateStatus.addMessage(updateResultMessages);
-
+        actionUpdateStatus.setCode(ThreadLocalRandom.current().nextInt(200, 300));
         return convertMessage(actionUpdateStatus, messageProperties);
     }
 
@@ -333,6 +334,7 @@ public class DmfSenderService extends MessageService {
         final Map<String, Object> headers = messageProperties.getHeaders();
         final DmfActionUpdateStatus actionUpdateStatus = new DmfActionUpdateStatus(cacheValue.getActionId(),
                 actionStatus);
+        actionUpdateStatus.setCode(ThreadLocalRandom.current().nextInt(200, 300));
         headers.put(MessageHeaderKey.TYPE, MessageType.EVENT.name());
         headers.put(MessageHeaderKey.TENANT, cacheValue.getTenant());
         headers.put(MessageHeaderKey.TOPIC, EventTopic.UPDATE_ACTION_STATUS.name());

@@ -94,15 +94,17 @@ public class DDISimulatedDevice extends AbstractSimulatedDevice {
     @Override
     public void poll() {
         if (!removed) {
-            getDeploymentBaseLink().flatMap(this::getActionWithDeployment).ifPresent(actionWithDeployment -> {
-                final Long actionId = actionWithDeployment.getKey();
-                final DdiDeployment deployment = actionWithDeployment.getValue().getDeployment();
-                final HandlingType updateType = deployment.getUpdate();
-                final List<DdiChunk> modules = deployment.getChunks();
-
-                currentActionId = actionId;
-                startDdiUpdate(actionId, updateType, modules);
-            });
+            // quick call - nothing more for now
+            getDeploymentBaseLink().flatMap(this::getActionWithDeployment);
+//            getDeploymentBaseLink().flatMap(this::getActionWithDeployment).ifPresent(actionWithDeployment -> {
+//                final Long actionId = actionWithDeployment.getKey();
+//                final DdiDeployment deployment = actionWithDeployment.getValue().getDeployment();
+//                final HandlingType updateType = deployment.getUpdate();
+//                final List<DdiChunk> modules = deployment.getChunks();
+//
+//                currentActionId = actionId;
+//                startDdiUpdate(actionId, updateType, modules);
+//            });
         }
     }
 

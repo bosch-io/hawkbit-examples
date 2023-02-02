@@ -38,7 +38,7 @@ public class NextPollTimeController {
      * Constructor which schedules the poll trigger runnable every second.
      */
     public NextPollTimeController() {
-        executorService.scheduleWithFixedDelay(new NextPollUpdaterRunnable(), 1, 1, TimeUnit.SECONDS);
+        //executorService.scheduleWithFixedDelay(new NextPollUpdaterRunnable(), 1, 1, TimeUnit.SECONDS);
     }
 
     private class NextPollUpdaterRunnable implements Runnable {

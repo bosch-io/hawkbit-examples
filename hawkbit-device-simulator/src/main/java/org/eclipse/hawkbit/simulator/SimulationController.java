@@ -10,13 +10,20 @@ package org.eclipse.hawkbit.simulator;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.eclipse.hawkbit.simulator.AbstractSimulatedDevice.Protocol;
 import org.eclipse.hawkbit.simulator.amqp.AmqpProperties;
 import org.eclipse.hawkbit.simulator.amqp.DmfSenderService;
 import org.eclipse.hawkbit.simulator.amqp.SimulatedUpdate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +35,8 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class SimulationController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SimulationController.class);
 
     private final DeviceSimulatorRepository repository;
 
@@ -68,13 +77,13 @@ public class SimulationController {
      * @param api
      *            the api-protocol to be used either {@code dmf} or {@code ddi}
      * @param endpoint
-     *            the URL endpoint to be used of the hawkbit-update-server for
-     *            DDI devices
+     *            the URL endpoint to be used of the hawkbit-update-server for DDI
+     *            devices
      * @param pollDelay
      *            number of delay in seconds to delay polling of DDI devices
      * @param gatewayToken
-     *            the hawkbit-update-server gatewaytoken in case authentication
-     *            is enforced in hawkbit
+     *            the hawkbit-update-server gatewaytoken in case authentication is
+     *            enforced in hawkbit
      * @return a response string that devices has been created
      * @throws MalformedURLException
      */
@@ -104,12 +113,20 @@ public class SimulationController {
             return createAmqpDisabledResponse();
         }
 
-        for (int i = 0; i < amount; i++) {
+        System.out.println(String.format("Prepare poll for %s devices with prefix %s.", amount, name));
+        List<AbstractSimulatedDevice> ddiSimulatedDevices = IntStream.range(0, amount).parallel().mapToObj(i -> {
             final String deviceId = name + i;
-            repository.add(deviceFactory.createSimulatedDeviceWithImmediatePoll(deviceId,
-                    (tenant != null ? tenant : simulationProperties.getDefaultTenant()), protocol, pollDelay,
-                    new URL(endpoint), gatewayToken));
-        }
+            try {
+                return deviceFactory.createSimulatedDeviceWithImmediatePoll(deviceId,
+                        (tenant != null ? tenant : simulationProperties.getDefaultTenant()), protocol, pollDelay,
+                        new URL(endpoint), gatewayToken);
+            } catch (MalformedURLException e) {
+                System.out.println("nonono");
+            }
+            return null;
+        }).filter(Objects::nonNull).collect(Collectors.toList());
+        System.out.println(String.format("Execute poll for %s devices with prefix %s.", amount, name));
+        ddiSimulatedDevices.parallelStream().forEach(AbstractSimulatedDevice::poll);
 
         return ResponseEntity.ok("Updated " + amount + " " + protocol + " connected targets!");
     }
@@ -123,8 +140,8 @@ public class SimulationController {
     /**
      * Update an attribute of a device.
      *
-     * NOTE: This represents not the expected client behaviour for DDI, since a
-     * DDI client shall only update its attributes if requested by hawkBit.
+     * NOTE: This represents not the expected client behaviour for DDI, since a DDI
+     * client shall only update its attributes if requested by hawkBit.
      *
      * @param tenant
      *            The tenant the device belongs to
@@ -164,8 +181,8 @@ public class SimulationController {
      *            The tenant the device belongs to
      * @param controllerId
      *            The controller id of the device that should be removed.
-     * @return HTTP OK (200) if the device was removed, or HTTP NO FOUND (404)
-     *         if not found.
+     * @return HTTP OK (200) if the device was removed, or HTTP NO FOUND (404) if
+     *         not found.
      */
     @GetMapping("/remove")
     public ResponseEntity<String> remove(@RequestParam(value = "tenant", required = false) final String tenant,
