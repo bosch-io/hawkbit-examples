@@ -22,6 +22,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
  * Spring security configuration to grant access for the configured in-memory user.
@@ -50,7 +51,7 @@ public class BasicAuthSecurityConfiguration {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(amrmRegistry -> amrmRegistry
-                        .requestMatchers("/").permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/")).permitAll()
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .exceptionHandling(configurer -> configurer.authenticationEntryPoint((request, response, e) -> {
