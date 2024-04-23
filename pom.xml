@@ -16,7 +16,7 @@
    <parent>
       <groupId>org.eclipse.hawkbit</groupId>
       <artifactId>hawkbit-parent</artifactId>
-      <version>spring_2.7-SNAPSHOT</version>
+      <version>2.2.1_spring_2.7</version>
    </parent>
 
    <artifactId>hawkbit-examples-parent</artifactId>
@@ -61,8 +61,9 @@
    </modules>
 
    <properties>
+
       <revision>spring_2.7-SNAPSHOT</revision>
-      <hawkbit.version>spring_2.7-SNAPSHOT</hawkbit.version>
+      <hawkbit.version>2.2.1_spring_2.7</hawkbit.version>
       
       <!-- Release - START -->
       <release.scm.connection>scm:git:git@github.com:eclipse/hawkbit-examples.git</release.scm.connection>
