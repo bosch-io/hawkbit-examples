@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
  * Spring security configuration.
@@ -33,7 +34,7 @@ public class NoAuthSecurityConfiguration {
     @Bean
     protected SecurityFilterChain filterChainNoAuth(final HttpSecurity httpSec) throws Exception {
         return httpSec
-                .authorizeRequests(amrmRegistry -> amrmRegistry.requestMatchers("/**").permitAll())
+                .authorizeRequests(amrmRegistry -> amrmRegistry.requestMatchers(new AntPathRequestMatcher("/**")).permitAll())
                 .csrf(AbstractHttpConfigurer::disable)
                 .build();
     }

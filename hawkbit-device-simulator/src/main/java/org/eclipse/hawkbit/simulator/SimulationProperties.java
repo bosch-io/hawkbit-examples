@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import jakarta.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotEmpty;
 
 import org.eclipse.hawkbit.simulator.AbstractSimulatedDevice.Protocol;
 import org.springframework.boot.context.properties.ConfigurationProperties;

@@ -61,7 +61,8 @@
    </modules>
 
    <properties>
-      <revision>0-SNAPSHOT</revision>
+
+      <revision>spring_2.7-SNAPSHOT</revision>
       <hawkbit.version>2.2.1_spring_2.7</hawkbit.version>
       
       <!-- Release - START -->
